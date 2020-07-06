@@ -1,0 +1,18 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/home/controller/user.js"
+    ],
+    "names": [
+        "uuidv1",
+        "require",
+        "User",
+        "token",
+        "user"
+    ],
+    "mappings": ";;;;;;;;;;;AAAA,IAAMA,SAASC,QAAQ,SAAR,CAAf;;IACMC,I,GACJ,gBAAa;AAAA;;AACX,OAAKC,KAAL,GAAaH,QAAb;AACD,C;;AAEH,IAAMI,OAAO,IAAIF,IAAJ,EAAb;QAEUA,I,GAARE,I",
+    "file": "../../../src/home/controller/user.js",
+    "sourcesContent": [
+        "const uuidv1 = require('uuid/v1')\nclass User{\n  constructor(){\n    this.token = uuidv1()\n  }\n}\nconst user = new User()\nexport {\n  user as User\n}"
+    ]
+}

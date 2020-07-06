@@ -30,6 +30,8 @@ var _base = require('./base.js');
 
 var _base2 = _interopRequireDefault(_base);
 
+var _user = require('./user');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _require = require('child_process'),
@@ -77,6 +79,24 @@ var _class = function (_Base) {
     (0, _classCallCheck3.default)(this, _class);
     return (0, _possibleConstructorReturn3.default)(this, _Base.apply(this, arguments));
   }
+
+  _class.prototype.__before = function __before() {
+    // this.header('Access-Control-Allow-Origin', this.header('origin') || '*');
+    // this.header('Access-Control-Allow-Headers', 'x-requested-with');
+    // this.header('Access-Control-Request-Method', 'GET,POST,PUT,DELETE');
+    // this.header('Access-Control-Allow-Credentials', 'true');
+    var _cookie = this.cookie(),
+        token = _cookie.token;
+
+    if (_user.User.token !== token && this.http.url !== '/file/login') {
+      this.json({
+        code: 403,
+        isError: true,
+        message: '需要登录',
+        data: []
+      });
+    }
+  };
 
   _class.prototype.statusAction = function () {
     var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
