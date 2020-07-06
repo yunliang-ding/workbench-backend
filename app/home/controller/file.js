@@ -39,6 +39,7 @@ var dirTree = require("directory-tree");
 var uuidv1 = require('uuid/v1');
 var fse = require('fs-extra');
 var fs = require('fs');
+var path = require('path');
 
 var _require = require('child_process'),
     exec = _require.exec;
@@ -203,92 +204,72 @@ var _class = function (_Base) {
     return queryContent;
   }();
 
-  _class.prototype.filelistAction = function () {
-    var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4() {
-      var param, data;
-      return _regenerator2.default.wrap(function _callee4$(_context4) {
-        while (1) {
-          switch (_context4.prev = _context4.next) {
-            case 0:
-              param = this.get('createModel') ? {
-                extensions: /\.js|.jsx|.ts|.tsx/,
-                exclude: /node_modules|.DS_Store|.git/
-              } : {
-                exclude: /node_modules|.DS_Store/
-              };
-              _context4.prev = 1;
-              data = dirTree(this.get('path'), param);
+  _class.prototype.getdirsAction = function () {
+    var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5() {
+      var _this2 = this;
 
-              if (!this.get('createModel')) {
-                _context4.next = 7;
-                break;
-              }
-
-              _context4.next = 6;
-              return this.queryContent(data.children);
-
-            case 6:
-              data.children = _context4.sent;
-
-            case 7:
-              this.json({
-                data: data,
-                isError: false
-              });
-              _context4.next = 14;
-              break;
-
-            case 10:
-              _context4.prev = 10;
-              _context4.t0 = _context4['catch'](1);
-
-              console.log(_context4.t0);
-              this.json({
-                error: _context4.t0,
-                isError: false
-              });
-
-            case 14:
-            case 'end':
-              return _context4.stop();
-          }
-        }
-      }, _callee4, this, [[1, 10]]);
-    }));
-
-    function filelistAction() {
-      return _ref4.apply(this, arguments);
-    }
-
-    return filelistAction;
-  }();
-
-  _class.prototype.getfileAction = function () {
-    var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5() {
-      var data;
+      var queryDir, data;
       return _regenerator2.default.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
               _context5.prev = 0;
-              _context5.next = 3;
-              return fse.readFile(this.get('path'), 'utf8');
 
-            case 3:
+              queryDir = function () {
+                var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(dir) {
+                  return _regenerator2.default.wrap(function _callee4$(_context4) {
+                    while (1) {
+                      switch (_context4.prev = _context4.next) {
+                        case 0:
+                          return _context4.abrupt('return', new _promise2.default(function (resolve) {
+                            var data = [];
+                            fs.readdir(dir, function (err, files) {
+                              files.forEach(function (file) {
+                                if (file.startsWith('.')) return;
+                                var filepath = path.join(dir, file);
+                                var stats = fs.statSync(filepath);
+                                if (stats.isDirectory()) {
+                                  data.push({
+                                    type: 'directory',
+                                    name: file,
+                                    path: filepath
+                                  });
+                                }
+                              });
+                              resolve(data);
+                            });
+                          }));
+
+                        case 1:
+                        case 'end':
+                          return _context4.stop();
+                      }
+                    }
+                  }, _callee4, _this2);
+                }));
+
+                return function queryDir(_x2) {
+                  return _ref5.apply(this, arguments);
+                };
+              }();
+
+              _context5.next = 4;
+              return queryDir(this.get('dir'));
+
+            case 4:
               data = _context5.sent;
 
               this.json({
-                data: this.toCode(data),
+                data: data,
                 isError: false
               });
               _context5.next = 11;
               break;
 
-            case 7:
-              _context5.prev = 7;
+            case 8:
+              _context5.prev = 8;
               _context5.t0 = _context5['catch'](0);
 
-              console.log(_context5.t0);
               this.json({
                 error: _context5.t0,
                 isError: true
@@ -299,100 +280,99 @@ var _class = function (_Base) {
               return _context5.stop();
           }
         }
-      }, _callee5, this, [[0, 7]]);
+      }, _callee5, this, [[0, 8]]);
     }));
 
-    function getfileAction() {
-      return _ref5.apply(this, arguments);
+    function getdirsAction() {
+      return _ref4.apply(this, arguments);
     }
 
-    return getfileAction;
+    return getdirsAction;
   }();
 
-  _class.prototype.savefileAction = function () {
+  _class.prototype.filelistAction = function () {
     var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6() {
-      var exist;
+      var param, data;
       return _regenerator2.default.wrap(function _callee6$(_context6) {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              _context6.prev = 0;
-              _context6.next = 3;
-              return fs.existsSync(this.post('path'));
+              param = this.get('createModel') ? {
+                extensions: /\.js|.jsx|.ts|.tsx/,
+                exclude: /node_modules|.DS_Store|.git/
+              } : {
+                exclude: /node_modules|.DS_Store/
+              };
+              _context6.prev = 1;
+              data = dirTree(this.get('path'), param);
 
-            case 3:
-              exist = _context6.sent;
-
-              if (!exist) {
-                _context6.next = 9;
+              if (!this.get('createModel')) {
+                _context6.next = 7;
                 break;
               }
 
-              fse.outputFile(this.post('path'), this.toCode(this.post('content')).toString());
+              _context6.next = 6;
+              return this.queryContent(data.children);
+
+            case 6:
+              data.children = _context6.sent;
+
+            case 7:
               this.json({
+                data: data,
                 isError: false
               });
-              _context6.next = 10;
+              _context6.next = 14;
               break;
-
-            case 9:
-              throw 'file is not exist';
 
             case 10:
-              _context6.next = 16;
-              break;
-
-            case 12:
-              _context6.prev = 12;
-              _context6.t0 = _context6['catch'](0);
+              _context6.prev = 10;
+              _context6.t0 = _context6['catch'](1);
 
               console.log(_context6.t0);
               this.json({
                 error: _context6.t0,
-                isError: true
+                isError: false
               });
 
-            case 16:
+            case 14:
             case 'end':
               return _context6.stop();
           }
         }
-      }, _callee6, this, [[0, 12]]);
+      }, _callee6, this, [[1, 10]]);
     }));
 
-    function savefileAction() {
+    function filelistAction() {
       return _ref6.apply(this, arguments);
     }
 
-    return savefileAction;
+    return filelistAction;
   }();
 
-  _class.prototype.newAction = function () {
+  _class.prototype.getfileAction = function () {
     var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7() {
-      var _ref8, data, isError;
-
+      var data;
       return _regenerator2.default.wrap(function _callee7$(_context7) {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
               _context7.prev = 0;
               _context7.next = 3;
-              return this.fileCommand('cd ' + this.post('path') + ';touch ' + this.post('filename'));
+              return fse.readFile(this.get('path'), 'utf8');
 
             case 3:
-              _ref8 = _context7.sent;
-              data = _ref8.data;
-              isError = _ref8.isError;
+              data = _context7.sent;
 
               this.json({
-                data: data,
-                isError: isError
+                data: this.toCode(data),
+                isError: false
               });
-              _context7.next = 13;
+              _context7.next = 11;
               break;
 
-            case 9:
-              _context7.prev = 9;
+            case 7:
+              _context7.prev = 7;
               _context7.t0 = _context7['catch'](0);
 
               console.log(_context7.t0);
@@ -401,47 +381,56 @@ var _class = function (_Base) {
                 isError: true
               });
 
-            case 13:
+            case 11:
             case 'end':
               return _context7.stop();
           }
         }
-      }, _callee7, this, [[0, 9]]);
+      }, _callee7, this, [[0, 7]]);
     }));
 
-    function newAction() {
+    function getfileAction() {
       return _ref7.apply(this, arguments);
     }
 
-    return newAction;
+    return getfileAction;
   }();
 
-  _class.prototype.deleteAction = function () {
-    var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee8() {
-      var _ref10, data, isError;
-
+  _class.prototype.savefileAction = function () {
+    var _ref8 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee8() {
+      var exist;
       return _regenerator2.default.wrap(function _callee8$(_context8) {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
               _context8.prev = 0;
               _context8.next = 3;
-              return this.fileCommand('cd ' + this.post('path') + ';rm -rf ' + this.post('filename'));
+              return fs.existsSync(this.post('path'));
 
             case 3:
-              _ref10 = _context8.sent;
-              data = _ref10.data;
-              isError = _ref10.isError;
+              exist = _context8.sent;
 
+              if (!exist) {
+                _context8.next = 9;
+                break;
+              }
+
+              fse.outputFile(this.post('path'), this.toCode(this.post('content')).toString());
               this.json({
-                data: data,
-                isError: isError
+                isError: false
               });
-              _context8.next = 13;
+              _context8.next = 10;
               break;
 
             case 9:
-              _context8.prev = 9;
+              throw 'file is not exist';
+
+            case 10:
+              _context8.next = 16;
+              break;
+
+            case 12:
+              _context8.prev = 12;
               _context8.t0 = _context8['catch'](0);
 
               console.log(_context8.t0);
@@ -450,24 +439,24 @@ var _class = function (_Base) {
                 isError: true
               });
 
-            case 13:
+            case 16:
             case 'end':
               return _context8.stop();
           }
         }
-      }, _callee8, this, [[0, 9]]);
+      }, _callee8, this, [[0, 12]]);
     }));
 
-    function deleteAction() {
-      return _ref9.apply(this, arguments);
+    function savefileAction() {
+      return _ref8.apply(this, arguments);
     }
 
-    return deleteAction;
+    return savefileAction;
   }();
 
-  _class.prototype.newfolderAction = function () {
-    var _ref11 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9() {
-      var _ref12, data, isError;
+  _class.prototype.newAction = function () {
+    var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9() {
+      var _ref10, data, isError;
 
       return _regenerator2.default.wrap(function _callee9$(_context9) {
         while (1) {
@@ -475,12 +464,12 @@ var _class = function (_Base) {
             case 0:
               _context9.prev = 0;
               _context9.next = 3;
-              return this.fileCommand('cd ' + this.post('path') + ';mkdir ' + this.post('foldername'));
+              return this.fileCommand('cd ' + this.post('path') + ';touch ' + this.post('filename'));
 
             case 3:
-              _ref12 = _context9.sent;
-              data = _ref12.data;
-              isError = _ref12.isError;
+              _ref10 = _context9.sent;
+              data = _ref10.data;
+              isError = _ref10.isError;
 
               this.json({
                 data: data,
@@ -507,16 +496,16 @@ var _class = function (_Base) {
       }, _callee9, this, [[0, 9]]);
     }));
 
-    function newfolderAction() {
-      return _ref11.apply(this, arguments);
+    function newAction() {
+      return _ref9.apply(this, arguments);
     }
 
-    return newfolderAction;
+    return newAction;
   }();
 
-  _class.prototype.renameAction = function () {
-    var _ref13 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10() {
-      var exist, _ref14, data, isError;
+  _class.prototype.deleteAction = function () {
+    var _ref11 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10() {
+      var _ref12, data, isError;
 
       return _regenerator2.default.wrap(function _callee10$(_context10) {
         while (1) {
@@ -524,42 +513,22 @@ var _class = function (_Base) {
             case 0:
               _context10.prev = 0;
               _context10.next = 3;
-              return fs.existsSync(this.post('path') + '/' + this.post('newName'));
+              return this.fileCommand('cd ' + this.post('path') + ';rm -rf ' + this.post('filename'));
 
             case 3:
-              exist = _context10.sent;
-
-              console.log(this.post('path') + '/' + this.post('newName'));
-
-              if (exist) {
-                _context10.next = 14;
-                break;
-              }
-
-              _context10.next = 8;
-              return this.fileCommand('cd ' + this.post('path') + ';mv ' + this.post('oldName') + ' ' + this.post('newName'));
-
-            case 8:
-              _ref14 = _context10.sent;
-              data = _ref14.data;
-              isError = _ref14.isError;
+              _ref12 = _context10.sent;
+              data = _ref12.data;
+              isError = _ref12.isError;
 
               this.json({
                 data: data,
                 isError: isError
               });
-              _context10.next = 15;
+              _context10.next = 13;
               break;
 
-            case 14:
-              throw this.post('newName') + ' file already exists!';
-
-            case 15:
-              _context10.next = 21;
-              break;
-
-            case 17:
-              _context10.prev = 17;
+            case 9:
+              _context10.prev = 9;
               _context10.t0 = _context10['catch'](0);
 
               console.log(_context10.t0);
@@ -568,30 +537,148 @@ var _class = function (_Base) {
                 isError: true
               });
 
-            case 21:
+            case 13:
             case 'end':
               return _context10.stop();
           }
         }
-      }, _callee10, this, [[0, 17]]);
+      }, _callee10, this, [[0, 9]]);
     }));
 
-    function renameAction() {
-      return _ref13.apply(this, arguments);
+    function deleteAction() {
+      return _ref11.apply(this, arguments);
     }
 
-    return renameAction;
+    return deleteAction;
   }();
 
-  _class.prototype.fileCommand = function () {
-    var _ref15 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee11(cmd) {
-      var data;
+  _class.prototype.newfolderAction = function () {
+    var _ref13 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee11() {
+      var _ref14, data, isError;
+
       return _regenerator2.default.wrap(function _callee11$(_context11) {
         while (1) {
           switch (_context11.prev = _context11.next) {
             case 0:
               _context11.prev = 0;
               _context11.next = 3;
+              return this.fileCommand('cd ' + this.post('path') + ';mkdir ' + this.post('foldername'));
+
+            case 3:
+              _ref14 = _context11.sent;
+              data = _ref14.data;
+              isError = _ref14.isError;
+
+              this.json({
+                data: data,
+                isError: isError
+              });
+              _context11.next = 13;
+              break;
+
+            case 9:
+              _context11.prev = 9;
+              _context11.t0 = _context11['catch'](0);
+
+              console.log(_context11.t0);
+              this.json({
+                error: _context11.t0,
+                isError: true
+              });
+
+            case 13:
+            case 'end':
+              return _context11.stop();
+          }
+        }
+      }, _callee11, this, [[0, 9]]);
+    }));
+
+    function newfolderAction() {
+      return _ref13.apply(this, arguments);
+    }
+
+    return newfolderAction;
+  }();
+
+  _class.prototype.renameAction = function () {
+    var _ref15 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee12() {
+      var exist, _ref16, data, isError;
+
+      return _regenerator2.default.wrap(function _callee12$(_context12) {
+        while (1) {
+          switch (_context12.prev = _context12.next) {
+            case 0:
+              _context12.prev = 0;
+              _context12.next = 3;
+              return fs.existsSync(this.post('path') + '/' + this.post('newName'));
+
+            case 3:
+              exist = _context12.sent;
+
+              console.log(this.post('path') + '/' + this.post('newName'));
+
+              if (exist) {
+                _context12.next = 14;
+                break;
+              }
+
+              _context12.next = 8;
+              return this.fileCommand('cd ' + this.post('path') + ';mv ' + this.post('oldName') + ' ' + this.post('newName'));
+
+            case 8:
+              _ref16 = _context12.sent;
+              data = _ref16.data;
+              isError = _ref16.isError;
+
+              this.json({
+                data: data,
+                isError: isError
+              });
+              _context12.next = 15;
+              break;
+
+            case 14:
+              throw this.post('newName') + ' file already exists!';
+
+            case 15:
+              _context12.next = 21;
+              break;
+
+            case 17:
+              _context12.prev = 17;
+              _context12.t0 = _context12['catch'](0);
+
+              console.log(_context12.t0);
+              this.json({
+                error: _context12.t0,
+                isError: true
+              });
+
+            case 21:
+            case 'end':
+              return _context12.stop();
+          }
+        }
+      }, _callee12, this, [[0, 17]]);
+    }));
+
+    function renameAction() {
+      return _ref15.apply(this, arguments);
+    }
+
+    return renameAction;
+  }();
+
+  _class.prototype.fileCommand = function () {
+    var _ref17 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee13(cmd) {
+      var data;
+      return _regenerator2.default.wrap(function _callee13$(_context13) {
+        while (1) {
+          switch (_context13.prev = _context13.next) {
+            case 0:
+              _context13.prev = 0;
+              _context13.next = 3;
               return new _promise2.default(function (resolve) {
                 exec(cmd, function (err, stdout, stderr) {
                   console.log('err==>', err);
@@ -617,57 +704,57 @@ var _class = function (_Base) {
               });
 
             case 3:
-              data = _context11.sent;
-              return _context11.abrupt('return', data);
+              data = _context13.sent;
+              return _context13.abrupt('return', data);
 
             case 7:
-              _context11.prev = 7;
-              _context11.t0 = _context11['catch'](0);
+              _context13.prev = 7;
+              _context13.t0 = _context13['catch'](0);
 
-              console.log(_context11.t0);
-              return _context11.abrupt('return', {
+              console.log(_context13.t0);
+              return _context13.abrupt('return', {
                 isError: true,
-                error: _context11.t0
+                error: _context13.t0
               });
 
             case 11:
             case 'end':
-              return _context11.stop();
+              return _context13.stop();
           }
         }
-      }, _callee11, this, [[0, 7]]);
+      }, _callee13, this, [[0, 7]]);
     }));
 
-    function fileCommand(_x2) {
-      return _ref15.apply(this, arguments);
+    function fileCommand(_x3) {
+      return _ref17.apply(this, arguments);
     }
 
     return fileCommand;
   }();
 
   _class.prototype.downloadAction = function () {
-    var _ref16 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee12() {
+    var _ref18 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee14() {
       var _get, path, type, name;
 
-      return _regenerator2.default.wrap(function _callee12$(_context12) {
+      return _regenerator2.default.wrap(function _callee14$(_context14) {
         while (1) {
-          switch (_context12.prev = _context12.next) {
+          switch (_context14.prev = _context14.next) {
             case 0:
               _get = this.get(), path = _get.path, type = _get.type;
               name = path.split('/').slice(-1)[0];
 
               if (!(type === 'dir')) {
-                _context12.next = 9;
+                _context14.next = 9;
                 break;
               }
 
-              _context12.next = 5;
+              _context14.next = 5;
               return this.fileCommand('cd ' + path + '; zip -r ' + name + '.zip ./*');
 
             case 5:
               path += '/' + name + '.zip'; // 生成压缩文件
               this.download(path, name + '.zip');
-              _context12.next = 10;
+              _context14.next = 10;
               break;
 
             case 9:
@@ -675,14 +762,14 @@ var _class = function (_Base) {
 
             case 10:
             case 'end':
-              return _context12.stop();
+              return _context14.stop();
           }
         }
-      }, _callee12, this);
+      }, _callee14, this);
     }));
 
     function downloadAction() {
-      return _ref16.apply(this, arguments);
+      return _ref18.apply(this, arguments);
     }
 
     return downloadAction;
