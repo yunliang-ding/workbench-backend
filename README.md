@@ -11,6 +11,8 @@ cnpm install
 cnpm install -g pm2
 # 启动服务
 pm2 startOrReload pm2.json
+# 配置默认账号信息
+www/config.json 配置用户名密码 默认admin/admin建议修改
 # 默认端口8090
 # git推送功能 
 需要配置下ssh
