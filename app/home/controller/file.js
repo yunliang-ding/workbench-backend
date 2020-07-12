@@ -86,7 +86,7 @@ var _class = function (_Base) {
       this.json({
         code: 403,
         isError: true,
-        message: _user.User.token === this.cookie('token') ? '不支持外部请求' : '需要登录',
+        message: _user.User.token === this.cookie('token') ? '无效的token' : '需要登录',
         data: []
       });
     }
@@ -777,3 +777,4 @@ var _class = function (_Base) {
 }(_base2.default);
 
 exports.default = _class;
+//# sourceMappingURL=file.js.map
