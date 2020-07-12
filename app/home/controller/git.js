@@ -85,14 +85,12 @@ var _class = function (_Base) {
     // this.header('Access-Control-Allow-Headers', 'x-requested-with');
     // this.header('Access-Control-Request-Method', 'GET,POST,PUT,DELETE');
     // this.header('Access-Control-Allow-Credentials', 'true');
-    var _cookie = this.cookie(),
-        token = _cookie.token;
-
+    var token = this.header('Csrf-Token');
     if (_user.User.token !== token && this.http.url !== '/file/login') {
       this.json({
         code: 403,
         isError: true,
-        message: '需要登录',
+        message: _user.User.token === this.cookie('token') ? '不支持外部请求' : '需要登录',
         data: []
       });
     }

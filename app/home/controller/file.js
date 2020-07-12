@@ -81,14 +81,12 @@ var _class = function (_Base) {
     // this.header('Access-Control-Allow-Headers', 'x-requested-with');
     // this.header('Access-Control-Request-Method', 'GET,POST,PUT,DELETE');
     // this.header('Access-Control-Allow-Credentials', 'true');
-    var _cookie = this.cookie(),
-        token = _cookie.token;
-
+    var token = this.header('Csrf-Token') || this.get('token');
     if (_user.User.token !== token && this.http.url !== '/file/login') {
       this.json({
         code: 403,
         isError: true,
-        message: '需要登录',
+        message: _user.User.token === this.cookie('token') ? '不支持外部请求' : '需要登录',
         data: []
       });
     }
@@ -96,13 +94,13 @@ var _class = function (_Base) {
 
   _class.prototype.isloginAction = function () {
     var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-      var _cookie2, token;
+      var _cookie, token;
 
       return _regenerator2.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _cookie2 = this.cookie(), token = _cookie2.token;
+              _cookie = this.cookie(), token = _cookie.token;
 
               this.json({
                 code: _user.User.token !== token ? 403 : 200
@@ -137,7 +135,7 @@ var _class = function (_Base) {
                 _user.User.token = uuidv1(); // 生成用户的token
                 this.cookie('token', _user.User.token, {
                   // domain: this.header('origin'),
-                  httponly: true // 只能通过http请求
+                  // httponly: true // 只能通过http请求
                 });
                 this.json({
                   isError: false,
